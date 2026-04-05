@@ -12,7 +12,8 @@ type ThumbnailRailProps = {
 };
 
 /**
- * Figma `image carousel` (scaled ~½): 65×46, gap 8px, full width; active = restrained dark edge.
+ * Figma `image carousel` (scaled ~½): 65×46, gap 8px; width follows thumb count — parent aligns rail (e.g. `ml-auto`).
+ * Active = restrained dark edge.
  */
 export function ThumbnailRail({
   chapters,
@@ -23,7 +24,7 @@ export function ThumbnailRail({
   return (
     <div
       className={cn(
-        "flex w-full min-w-0 gap-2 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+        "flex w-max min-w-0 gap-2 pb-0.5",
         className,
       )}
       role="tablist"

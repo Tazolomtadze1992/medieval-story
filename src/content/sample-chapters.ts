@@ -112,4 +112,40 @@ export const sampleChapters: Chapter[] = [
     imageAlt: "Garden Archive chapter 8 — The Path Home",
     thumbnailSrc: "/images/chapter-8.jpeg",
   },
+  {
+    id: "garden-study",
+    chapterNumber: 9,
+    title: "Garden (study)",
+    body: "Temporary study slide. Paths, beds, and a held breath — placeholder copy until this chapter is written.",
+    paragraphLines: [
+      "Temporary study slide. Paths, beds, and a held breath — placeholder copy until this chapter is written.",
+    ],
+    imageSrc: "/images/garden.png",
+    imageAlt: "Garden Archive — garden study",
+    thumbnailSrc: "/images/garden.png",
+  },
+  {
+    id: "beauty-study",
+    chapterNumber: 10,
+    title: "Beauty (study)",
+    body: "Temporary study slide. Light on a still surface — placeholder copy until this chapter is written.",
+    paragraphLines: [
+      "Temporary study slide. Light on a still surface — placeholder copy until this chapter is written.",
+    ],
+    imageSrc: "/images/beauty.png",
+    imageAlt: "Garden Archive — beauty study",
+    thumbnailSrc: "/images/beauty.png",
+  },
+  {
+    id: "statue-study",
+    chapterNumber: 11,
+    title: "Statue (study)",
+    body: "Temporary study slide. Stone and weather — placeholder copy until this chapter is written.",
+    paragraphLines: [
+      "Temporary study slide. Stone and weather — placeholder copy until this chapter is written.",
+    ],
+    imageSrc: "/images/statue.png",
+    imageAlt: "Garden Archive — statue study",
+    thumbnailSrc: "/images/statue.png",
+  },
 ];

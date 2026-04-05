@@ -64,12 +64,38 @@ export function ChapterViewer({
     return null;
   }
 
+  /** One shared row in the left 4-column band: label | counter (cols 2–3) | prev/next (col 4). */
+  const leftColumnFooter = (
+    <div
+      className={cn(
+        "grid w-full min-w-0 grid-cols-1 gap-4",
+        "lg:grid-cols-4 lg:items-end lg:gap-x-8",
+      )}
+    >
+      <p className="text-site-title text-foreground min-w-0 lg:justify-self-start">
+        Garden Archive
+      </p>
+      <ChapterCounter
+        current={activeIndex + 1}
+        total={total}
+        className="min-w-0 lg:col-span-2 lg:justify-self-end"
+      />
+      <ChapterNavigation
+        onPrevious={goPrevious}
+        onNext={goNext}
+        canGoPrevious={canGoPrevious}
+        canGoNext={canGoNext}
+        className="min-w-0 lg:w-full lg:min-w-0 lg:justify-between lg:gap-0"
+      />
+    </div>
+  );
+
   return (
     <div className={cn("flex h-full min-h-0 flex-1 flex-col", className)}>
       <EditorialLayout
         topBar={topBar}
         textPanel={
-          <div className="flex h-full min-h-0 w-full min-w-0 flex-col justify-between gap-8">
+          <div className="flex h-full min-h-0 w-full min-w-0 flex-col">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={chapter.id}
@@ -88,17 +114,9 @@ export function ChapterViewer({
                 />
               </motion.div>
             </AnimatePresence>
-            <div className="flex shrink-0 items-center justify-between gap-4">
-              <ChapterCounter current={activeIndex + 1} total={total} />
-              <ChapterNavigation
-                onPrevious={goPrevious}
-                onNext={goNext}
-                canGoPrevious={canGoPrevious}
-                canGoNext={canGoNext}
-              />
-            </div>
           </div>
         }
+        leftColumnFooter={leftColumnFooter}
         imagePanel={
           <div className="h-full w-full">
             <ChapterImageWipe
