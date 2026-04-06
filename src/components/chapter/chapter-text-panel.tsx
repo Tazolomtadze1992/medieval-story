@@ -7,7 +7,6 @@ import {
   chapterParagraphChunk,
   chapterTitleMaskReveal,
   editorialEase,
-  introHandoffParagraphMaskReveal,
 } from "@/lib/motion/variants";
 import {
   CHAPTER_PARAGRAPH_CHUNK_DURATION_S,
@@ -76,33 +75,42 @@ export function ChapterTextPanel({
 
     return (
       <div className={cn("flex w-full min-w-0 flex-col gap-6", className)}>
-        <motion.h2
-          className="text-chapter-title text-foreground will-change-[clip-path,opacity,transform]"
-          variants={chapterTitleMaskReveal}
-          initial={prefersReduced ? false : "initial"}
-          animate={titleDone ? "animate" : "initial"}
-          transition={introTitleTrans}
-        >
-          {title}
-        </motion.h2>
-        <motion.div
+        <div className="overflow-hidden py-[0.04em]">
+          <motion.h2
+            className="text-chapter-title text-foreground will-change-[clip-path,opacity,transform]"
+            initial={prefersReduced ? false : { y: "115%", opacity: 1 }}
+            animate={titleDone ? { y: 0, opacity: 1 } : { y: "115%", opacity: 1 }}
+            transition={introTitleTrans}
+          >
+            {title}
+          </motion.h2>
+        </div>
+        <div
           className={cn(
             "text-story-body text-foreground w-full min-w-0",
             dropCap && "story-decorative",
           )}
-          variants={introHandoffParagraphMaskReveal}
-          initial={prefersReduced ? false : "initial"}
-          animate={paragraphDone ? "animate" : "initial"}
-          transition={introParagraphTrans}
         >
           <p className="max-w-none text-pretty">
             {chunks.map((chunk, i) => (
-              <span key={i} className="block">
-                {chunk}
+              <span key={i} className="block overflow-hidden">
+                <motion.span
+                  className="block will-change-[transform]"
+                  initial={prefersReduced ? false : { y: "115%" }}
+                  animate={paragraphDone ? { y: 0 } : { y: "115%" }}
+                  transition={withReducedMotion(prefersReduced, {
+                    ...introParagraphTrans,
+                    delay:
+                      (prefersReduced ? 0 : introParagraphTrans.delay ?? 0) +
+                      i * 0.08,
+                  })}
+                >
+                  {chunk}
+                </motion.span>
               </span>
             ))}
           </p>
-        </motion.div>
+        </div>
       </div>
     );
   }

@@ -39,20 +39,3 @@ export const maskedReveal: Variants = {
   animate: { opacity: 1, clipPath: "inset(0 0 0% 0)" },
   exit: { opacity: 0, clipPath: "inset(0 0 100% 0)" },
 };
-
-/**
- * Initial page reveal after site intro only — body copy.
- * Softer L→R clip than `chapterTitleMaskReveal` (20% vs full width), minimal y.
- */
-export const introHandoffParagraphMaskReveal: Variants = {
-  initial: {
-    opacity: 1,
-    clipPath: "inset(0 22% 0 0)",
-    y: 2,
-  },
-  animate: {
-    opacity: 1,
-    clipPath: "inset(0 0% 0 0)",
-    y: 0,
-  },
-};
