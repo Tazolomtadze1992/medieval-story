@@ -9,6 +9,7 @@ import { ChapterTextPanel } from "@/components/chapter/chapter-text-panel";
 import { ChapterNavigation } from "@/components/chapter/chapter-navigation";
 import { ThumbnailRail } from "@/components/chapter/thumbnail-rail";
 import { ChapterCounter } from "@/components/chapter/chapter-counter";
+import { introContentStepTransition } from "@/lib/motion/page-intro";
 import { chapterTextPresence } from "@/lib/motion/variants";
 import { subtle, withReducedMotion } from "@/lib/motion/transitions";
 import { cn } from "@/lib/utils";
@@ -20,6 +21,10 @@ type ChapterViewerProps = {
   showDropCapOnFirst?: boolean;
   className?: string;
   topBar?: React.ReactNode;
+  /** Intro phase 3: 0–4 layered reveal; omit after intro ends */
+  introRevealStage?: number;
+  /** Skip default chapter entrance motion after intro */
+  entranceComplete?: boolean;
 };
 
 export function ChapterViewer({
@@ -29,9 +34,13 @@ export function ChapterViewer({
   showDropCapOnFirst = true,
   className,
   topBar,
+  introRevealStage,
+  entranceComplete = false,
 }: ChapterViewerProps) {
   const prefersReduced = useReducedMotion();
   const transition = withReducedMotion(prefersReduced, subtle);
+  const introTrans = introContentStepTransition(prefersReduced);
+  const ir = introRevealStage;
   const chapter = chapters[activeIndex];
   const total = chapters.length;
   const canGoPrevious = activeIndex > 0;
@@ -65,7 +74,7 @@ export function ChapterViewer({
   }
 
   /** One shared row in the left 4-column band: label | counter (cols 2–3) | prev/next (col 4). */
-  const leftColumnFooter = (
+  const leftColumnFooterInner = (
     <div
       className={cn(
         "grid w-full min-w-0 grid-cols-1 gap-4",
@@ -90,6 +99,23 @@ export function ChapterViewer({
     </div>
   );
 
+  const leftColumnFooter =
+    ir !== undefined ? (
+      <motion.div
+        className="w-full"
+        initial={false}
+        animate={{
+          opacity: ir >= 4 ? 1 : 0,
+          y: ir >= 4 ? 0 : 4,
+        }}
+        transition={introTrans}
+      >
+        {leftColumnFooterInner}
+      </motion.div>
+    ) : (
+      leftColumnFooterInner
+    );
+
   return (
     <div className={cn("flex h-full min-h-0 flex-1 flex-col", className)}>
       <EditorialLayout
@@ -111,6 +137,8 @@ export function ChapterViewer({
                   body={chapter.body}
                   paragraphLines={chapter.paragraphLines}
                   dropCap={showDropCapOnFirst && activeIndex === 0}
+                  introRevealStage={ir}
+                  entranceComplete={entranceComplete}
                 />
               </motion.div>
             </AnimatePresence>
@@ -118,7 +146,15 @@ export function ChapterViewer({
         }
         leftColumnFooter={leftColumnFooter}
         imagePanel={
-          <div className="h-full w-full">
+          <motion.div
+            className="h-full w-full"
+            initial={false}
+            animate={{
+              opacity: ir !== undefined ? (ir >= 3 ? 1 : 0) : 1,
+              y: ir !== undefined ? (ir >= 3 ? 0 : 10) : 0,
+            }}
+            transition={introTrans}
+          >
             <ChapterImageWipe
               chapterKey={chapter.id}
               activeIndex={activeIndex}
@@ -128,14 +164,32 @@ export function ChapterViewer({
               accentColor={chapter.themeAccent}
               className="h-full min-h-[200px] border-0 shadow-none lg:min-h-0"
             />
-          </div>
+          </motion.div>
         }
         bottomRail={
-          <ThumbnailRail
-            chapters={chapters}
-            activeIndex={activeIndex}
-            onSelect={onIndexChange}
-          />
+          ir !== undefined ? (
+            <motion.div
+              className="ml-auto w-max min-w-0 max-w-full"
+              initial={false}
+              animate={{
+                opacity: ir >= 4 ? 1 : 0,
+                y: ir >= 4 ? 0 : 4,
+              }}
+              transition={introTrans}
+            >
+              <ThumbnailRail
+                chapters={chapters}
+                activeIndex={activeIndex}
+                onSelect={onIndexChange}
+              />
+            </motion.div>
+          ) : (
+            <ThumbnailRail
+              chapters={chapters}
+              activeIndex={activeIndex}
+              onSelect={onIndexChange}
+            />
+          )
         }
       />
     </div>

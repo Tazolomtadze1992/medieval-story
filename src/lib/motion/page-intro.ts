@@ -47,6 +47,17 @@ export const blockEntranceTransition = (delay: number, reduced: boolean) => {
   } as const;
 };
 
+/** Phase 2: accent square → full-screen panel (same editorial ease, no spring) */
+export const INTRO_EXPAND_DURATION = 1.18;
+
+export function introExpandTransition(reduced: boolean | null): Transition {
+  if (reduced) return { duration: 0 };
+  return {
+    duration: INTRO_EXPAND_DURATION,
+    ease: pageIntroEase,
+  };
+}
+
 export function pageIntroTransition(reduced: boolean | null): Transition {
   if (reduced) return { duration: 0 };
   return { duration: PAGE_INTRO_TIMINGS.titleDuration, ease: pageIntroEase };
@@ -63,4 +74,61 @@ export function blockEnterDelaySeconds(reduced: boolean | null): number {
     archiveDelay + titleDuration,
   );
   return titleDone + gapBeforeBlock;
+}
+
+/**
+ * Phase 3: after the white panel fills the screen, stagger page content (tunable).
+ * Cumulative delays from `onWhitePanelFull` — see `garden-archive-prototype` schedulers.
+ */
+export const INTRO_CONTENT_REVEAL = {
+  /** Pause after white fill, then chapter title appears */
+  titleDelayS: 0.07,
+  /** After title step, paragraph band */
+  paragraphAfterTitleS: 0.22,
+  /** After paragraph, main image */
+  imageAfterParagraphS: 0.3,
+  /** After image, footer + thumbnail rail */
+  bottomAfterImageS: 0.34,
+  /** After bottom band, unmount intro overlay */
+  dismissAfterBottomS: 0.42,
+  /** Opacity / soft lift per layer */
+  stepDurationS: 0.52,
+  /** Short settle before dismiss in reduced mode */
+  dismissAfterBottomReducedS: 0.04,
+} as const;
+
+export const introContentStepTransition = (
+  reduced: boolean | null,
+): Transition => {
+  if (reduced) return { duration: 0 };
+  return {
+    duration: INTRO_CONTENT_REVEAL.stepDurationS,
+    ease: pageIntroEase,
+  };
+};
+
+/** Masked text handoff (intro → page) — title vs paragraph; see `ChapterTextPanel` intro branch */
+export const INTRO_HANDOFF_TEXT = {
+  titleDurationS: 0.92,
+  paragraphDurationS: 0.74,
+} as const;
+
+export function introHandoffTitleTransition(
+  reduced: boolean | null,
+): Transition {
+  if (reduced) return { duration: 0 };
+  return {
+    duration: INTRO_HANDOFF_TEXT.titleDurationS,
+    ease: pageIntroEase,
+  };
+}
+
+export function introHandoffParagraphTransition(
+  reduced: boolean | null,
+): Transition {
+  if (reduced) return { duration: 0 };
+  return {
+    duration: INTRO_HANDOFF_TEXT.paragraphDurationS,
+    ease: pageIntroEase,
+  };
 }

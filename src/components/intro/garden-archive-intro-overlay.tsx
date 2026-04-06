@@ -1,21 +1,32 @@
 "use client";
 
 import type { CSSProperties } from "react";
+import { useCallback, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   blockEnterDelaySeconds,
   blockEntranceTransition,
   INTRO_ACCENT_BLOCK,
+  introExpandTransition,
   pageIntroTransition,
   PAGE_INTRO_TIMINGS,
 } from "@/lib/motion/page-intro";
 import { cn } from "@/lib/utils";
 
+type IntroPhase = "intro" | "expanding" | "expanded";
+
+type GardenArchiveIntroOverlayProps = {
+  /** Fires once the white panel finishes growing to fullscreen (start content reveal). */
+  onWhitePanelFull?: () => void;
+};
+
 /**
- * Phase 1: full-screen dark layer + split word reveal + accent block.
- * Does not dismiss or reveal the page yet — extend with a second phase later.
+ * Phase 1: dark layer + split title + masked accent square.
+ * Phase 2: square → full-screen cream panel (page still hidden).
  */
-export function GardenArchiveIntroOverlay() {
+export function GardenArchiveIntroOverlay({
+  onWhitePanelFull,
+}: GardenArchiveIntroOverlayProps) {
   const prefersReduced = useReducedMotion();
   const reduced = Boolean(prefersReduced);
 
@@ -24,12 +35,34 @@ export function GardenArchiveIntroOverlay() {
 
   const { gardenDelay, wordStagger } = PAGE_INTRO_TIMINGS;
 
+  const [phase, setPhase] = useState<IntroPhase>("intro");
+  const [expandRect, setExpandRect] = useState<DOMRect | null>(null);
+  const accentRef = useRef<HTMLDivElement>(null);
+  const accentSettledRef = useRef(false);
+
+  const onAccentIntroComplete = useCallback(() => {
+    if (accentSettledRef.current) return;
+    accentSettledRef.current = true;
+    const el = accentRef.current;
+    if (!el) return;
+    setExpandRect(el.getBoundingClientRect());
+    setPhase("expanding");
+  }, []);
+
+  const onExpandComplete = useCallback(() => {
+    setPhase("expanded");
+    onWhitePanelFull?.();
+  }, [onWhitePanelFull]);
+
   return (
     <div
       className={cn(
         "fixed inset-0 z-[200] flex items-center justify-center",
         "bg-[#121212]",
-        "pointer-events-auto select-none",
+        "select-none",
+        phase === "expanded"
+          ? "pointer-events-none"
+          : "pointer-events-auto",
       )}
       aria-hidden
     >
@@ -73,6 +106,7 @@ export function GardenArchiveIntroOverlay() {
               aria-hidden
             >
               <motion.div
+                ref={accentRef}
                 initial={
                   reduced
                     ? false
@@ -93,7 +127,11 @@ export function GardenArchiveIntroOverlay() {
                     delay: reduced ? 0 : blockDelay,
                   },
                 }}
-                className="absolute bottom-[10px] left-0 shrink-0 bg-[#f4efe6]"
+                onAnimationComplete={onAccentIntroComplete}
+                className={cn(
+                  "absolute bottom-[10px] left-0 shrink-0 bg-[#f4efe6]",
+                  phase !== "intro" && "opacity-0",
+                )}
                 style={{
                   width: INTRO_ACCENT_BLOCK.size,
                   height: INTRO_ACCENT_BLOCK.size,
@@ -104,6 +142,26 @@ export function GardenArchiveIntroOverlay() {
           </div>
         </div>
       </div>
+
+      {expandRect != null && phase !== "intro" ? (
+        <motion.div
+          className="fixed z-[201] bg-background pointer-events-none"
+          initial={{
+            top: expandRect.top,
+            left: expandRect.left,
+            width: expandRect.width,
+            height: expandRect.height,
+          }}
+          animate={{
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+          }}
+          transition={introExpandTransition(prefersReduced)}
+          onAnimationComplete={onExpandComplete}
+        />
+      ) : null}
     </div>
   );
 }
