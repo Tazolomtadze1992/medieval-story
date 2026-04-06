@@ -1,0 +1,7 @@
+<svg width="11" height="18" viewBox="0 0 11 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 0L3.66667 0L3.66667 3.6L0 3.6L0 0Z" fill="currentColor"/>
+<path d="M3.66667 3.6L7.33333 3.6L7.33333 7.2H3.66667L3.66667 3.6Z" fill="currentColor"/>
+<path d="M7.33333 7.2L11 7.2L11 10.8H7.33333V7.2Z" fill="currentColor"/>
+<path d="M3.66667 10.8L7.33333 10.8L7.33333 14.4L3.66667 14.4L3.66667 10.8Z" fill="currentColor"/>
+<path d="M0 14.4H3.66667L3.66667 18H0L0 14.4Z" fill="currentColor"/>
+</svg>

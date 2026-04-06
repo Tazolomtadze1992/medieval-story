@@ -148,4 +148,28 @@ export const sampleChapters: Chapter[] = [
     imageAlt: "Garden Archive — statue study",
     thumbnailSrc: "/images/statue.png",
   },
+  {
+    id: "figure-study",
+    chapterNumber: 12,
+    title: "Figure (study)",
+    body: "Temporary study slide. Placeholder copy until this chapter is written.",
+    paragraphLines: [
+      "Temporary study slide. Placeholder copy until this chapter is written.",
+    ],
+    imageSrc: "/images/figure.png",
+    imageAlt: "Garden Archive — figure study",
+    thumbnailSrc: "/images/figure.png",
+  },
+  {
+    id: "figure2-study",
+    chapterNumber: 13,
+    title: "Figure II (study)",
+    body: "Temporary study slide. Placeholder copy until this chapter is written.",
+    paragraphLines: [
+      "Temporary study slide. Placeholder copy until this chapter is written.",
+    ],
+    imageSrc: "/images/figure2.png",
+    imageAlt: "Garden Archive — second figure study",
+    thumbnailSrc: "/images/figure2.png",
+  },
 ];
