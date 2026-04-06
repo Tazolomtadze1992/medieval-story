@@ -137,8 +137,7 @@ export function ChapterImageWipe({
     startTransition(() => setWipe(null));
   };
 
-  const clip =
-    wipe && wipe.direction === "prev" ? clipPrev : clipNext;
+  const clip = wipe && wipe.direction === "prev" ? clipPrev : clipNext;
 
   if (!wipe) {
     return (

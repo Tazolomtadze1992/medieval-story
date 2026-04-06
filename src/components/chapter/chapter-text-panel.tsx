@@ -3,11 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { useMemo } from "react";
 import { cn } from "@/lib/utils";
-import {
-  chapterParagraphChunk,
-  chapterTitleMaskReveal,
-  editorialEase,
-} from "@/lib/motion/variants";
+import { editorialEase } from "@/lib/motion/variants";
 import {
   CHAPTER_PARAGRAPH_CHUNK_DURATION_S,
   CHAPTER_PARAGRAPH_CHUNK_STAGGER_S,
@@ -115,19 +111,21 @@ export function ChapterTextPanel({
     );
   }
 
-  const skipEntrance = entranceComplete || prefersReduced;
+  const skipEntrance = prefersReduced;
 
   return (
     <div className={cn("flex w-full min-w-0 flex-col gap-6", className)}>
-      <motion.h2
-        className="text-chapter-title text-foreground will-change-[clip-path,opacity]"
-        variants={chapterTitleMaskReveal}
-        initial={skipEntrance ? false : "initial"}
-        animate="animate"
-        transition={titleTransition}
-      >
-        {title}
-      </motion.h2>
+      <div className="overflow-hidden py-[0.04em]">
+        <motion.h2
+          className="text-chapter-title text-foreground will-change-[transform]"
+          initial={skipEntrance ? false : { y: "115%" }}
+          animate={{ y: 0 }}
+          exit={prefersReduced ? undefined : { y: "-115%" }}
+          transition={titleTransition}
+        >
+          {title}
+        </motion.h2>
+      </div>
       <div
         className={cn(
           "text-story-body text-foreground w-full min-w-0",
@@ -136,21 +134,22 @@ export function ChapterTextPanel({
       >
         <p className="max-w-none text-pretty">
           {chunks.map((chunk, i) => (
-            <motion.span
-              key={i}
-              className="block will-change-[opacity,transform]"
-              variants={chapterParagraphChunk}
-              initial={skipEntrance ? false : "initial"}
-              animate="animate"
-              transition={withReducedMotion(prefersReduced, {
-                duration: CHAPTER_PARAGRAPH_CHUNK_DURATION_S,
-                delay:
-                  paragraphBaseDelay + i * CHAPTER_PARAGRAPH_CHUNK_STAGGER_S,
-                ease: editorialEase,
-              })}
-            >
-              {chunk}
-            </motion.span>
+            <span key={i} className="block overflow-hidden">
+              <motion.span
+                className="block will-change-[transform]"
+                initial={skipEntrance ? false : { y: "115%" }}
+                animate={{ y: 0 }}
+                exit={prefersReduced ? undefined : { y: "-115%" }}
+                transition={withReducedMotion(prefersReduced, {
+                  duration: CHAPTER_PARAGRAPH_CHUNK_DURATION_S,
+                  delay:
+                    paragraphBaseDelay + i * CHAPTER_PARAGRAPH_CHUNK_STAGGER_S,
+                  ease: editorialEase,
+                })}
+              >
+                {chunk}
+              </motion.span>
+            </span>
           ))}
         </p>
       </div>

@@ -9,7 +9,7 @@ import { ChapterTextPanel } from "@/components/chapter/chapter-text-panel";
 import { ChapterNavigation } from "@/components/chapter/chapter-navigation";
 import { ThumbnailRail } from "@/components/chapter/thumbnail-rail";
 import { ChapterCounter } from "@/components/chapter/chapter-counter";
-import { introContentStepTransition } from "@/lib/motion/page-intro";
+import { introContentStepTransition, pageIntroEase } from "@/lib/motion/page-intro";
 import { chapterTextPresence } from "@/lib/motion/variants";
 import { subtle, withReducedMotion } from "@/lib/motion/transitions";
 import { cn } from "@/lib/utils";
@@ -40,6 +40,12 @@ export function ChapterViewer({
   const prefersReduced = useReducedMotion();
   const transition = withReducedMotion(prefersReduced, subtle);
   const introTrans = introContentStepTransition(prefersReduced);
+  const introImageTrans = prefersReduced
+    ? { duration: 0 }
+    : {
+        duration: 1.3,
+        ease: pageIntroEase,
+      };
   const ir = introRevealStage;
   const chapter = chapters[activeIndex];
   const total = chapters.length;
@@ -94,7 +100,7 @@ export function ChapterViewer({
         onNext={goNext}
         canGoPrevious={canGoPrevious}
         canGoNext={canGoNext}
-        className="min-w-0 lg:w-full lg:min-w-0 lg:justify-between lg:gap-0"
+        className="min-w-0 lg:min-w-0 lg:w-auto lg:justify-end"
       />
     </div>
   );
@@ -147,13 +153,17 @@ export function ChapterViewer({
         leftColumnFooter={leftColumnFooter}
         imagePanel={
           <motion.div
-            className="h-full w-full"
+            className="h-full w-full overflow-hidden"
             initial={false}
             animate={{
-              opacity: ir !== undefined ? (ir >= 3 ? 1 : 0) : 1,
-              y: ir !== undefined ? (ir >= 3 ? 0 : 10) : 0,
+              clipPath:
+                ir !== undefined
+                  ? ir >= 3
+                    ? "inset(0 0 0% 0)"
+                    : "inset(0 0 100% 0)"
+                  : "inset(0 0 0% 0)",
             }}
-            transition={introTrans}
+            transition={introImageTrans}
           >
             <ChapterImageWipe
               chapterKey={chapter.id}

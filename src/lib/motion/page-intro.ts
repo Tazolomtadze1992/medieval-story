@@ -84,13 +84,13 @@ export const INTRO_CONTENT_REVEAL = {
   /** Pause after white fill, then chapter title appears */
   titleDelayS: 0.07,
   /** After title step, paragraph band */
-  paragraphAfterTitleS: 0.22,
+  paragraphAfterTitleS: 0.18,
   /** After paragraph, main image */
-  imageAfterParagraphS: 0.3,
+  imageAfterParagraphS: 0.22,
   /** After image, footer + thumbnail rail */
-  bottomAfterImageS: 0.34,
+  bottomAfterImageS: 0.26,
   /** After bottom band, unmount intro overlay */
-  dismissAfterBottomS: 0.42,
+  dismissAfterBottomS: 0.32,
   /** Opacity / soft lift per layer */
   stepDurationS: 0.52,
   /** Short settle before dismiss in reduced mode */
